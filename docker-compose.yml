@@ -2,6 +2,7 @@ version: '3.8'
 services:
   app:
     build: .
+    container_name: my-app
     depends_on:
       - postgres
     ports:
@@ -9,9 +10,12 @@ services:
     volumes:
       - ./:/usr/src/app/
       - /usr/src/app/node_modules
+    networks:
+      - compose-bridge
 
   postgres:
     image: postgres:14.1-alpine
+    container_name: db-postgres
     restart: always
     environment:
       - POSTGRES_USER=root
@@ -21,3 +25,8 @@ services:
       - "5432:5432"
     volumes:
       - ./database-seed.sql:/docker-entrypoint-initdb.d/database-seed.sql
+    networks:
+      - compose-bridge
+networks:
+  compose-bridge:
+    driver: bridge
